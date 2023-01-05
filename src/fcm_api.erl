@@ -31,7 +31,8 @@ push(RegIds, Message, ApiKey) ->
 push(Message, ApiKey) ->
     try httpc:request(post, ?HTTP_REQUEST(ApiKey, Message), [], ?HTTP_OPTIONS) of
         {ok, {{_, 200, _}, _Headers, Body}} ->
-            Json = jsx:decode(Body),
+            % jsx:decode default is changed to returns maps
+            Json = jsx:decode(Body, [{return_maps, false}]),
             ?INFO_MSG("Result was: ~p~n", [Json]),
             {ok, result_from(Json)};
         {ok, {{_, 400, _}, _, Body}} ->
